@@ -1356,6 +1356,23 @@ public class InAppBrowser extends CordovaPlugin {
         }
 
         @Override
+        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+            super.onReceivedError(view, errorCode, description, failingUrl);
+
+            try {
+                JSONObject obj = new JSONObject();
+                obj.put("type", LOAD_ERROR_EVENT);
+                obj.put("url", failingUrl);
+                obj.put("code", errorCode);
+                obj.put("message", description);
+
+                sendUpdate(obj, true, PluginResult.Status.ERROR);
+            } catch (JSONException ex) {
+                LOG.d(LOG_TAG, "Should never happen");
+            }
+        }
+
+        @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             super.onReceivedError(view, request, error);
             try {
